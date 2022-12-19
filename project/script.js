@@ -3,7 +3,12 @@ var myObstacles = [];
 
 function startGame() {
     myGameArea.start();
-    myGamePiece = new component(30, 30, "red", 10, 120, "image");
+    console.log(341 * (((myGameArea.canvas.width * 5) / 100) / 100))
+    console.log(692 * (((myGameArea.canvas.width * 5) / 100) / 100))
+
+    myGamePiece = new component(100, 200, "https://www.nicepng.com/png/full/36-365566_jedistarfighter-detail-star-wars-jedi-starfighter-top-view.png", 100, 100, "image");
+
+    myBackground = new component(myGameArea.canvas.width, myGameArea.canvas.height, "https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80", 0, 0, "background");
     // myObstacle = new component(10, 200, "green", 300, 120);
 
 }
@@ -15,7 +20,7 @@ var myGameArea = {
     canvas: document.createElement("canvas"),
     start: function () {
         this.canvas.width = document.body.clientWidth;
-        this.canvas.height = window.innerHeight - 150;
+        this.canvas.height = window.innerHeight;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.frameNo = 0;
@@ -72,11 +77,19 @@ function updateGameArea() {
     if (myGameArea.keys && myGameArea.keys[39]) moveright()
     if (myGameArea.keys && myGameArea.keys[38]) moveup()
     if (myGameArea.keys && myGameArea.keys[40]) movedown()
+    myBackground.newPos();
+    myBackground.update();
     myGamePiece.newPos();
     myGamePiece.update();
+    myBackground.speedY = 1;
 }
 
-function component(width, height, color, x, y) {
+function component(width, height, url, x, y, type) {
+    this.type = type;
+    if (type == "image" || type == "background") {
+        this.image = new Image();
+        this.image.src = url;
+    }
     this.width = width;
     this.height = height;
     this.speedX = 0;
@@ -85,32 +98,52 @@ function component(width, height, color, x, y) {
     this.y = y;
     this.update = function () {
         ctx = myGameArea.context;
-        ctx.fillStyle = color;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        if (type == "image" || type == "background") {
+            ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+            if (type == "background") {
+                ctx.drawImage(this.image, this.x, this.y - this.height, this.width, this.height);
+            }
+        }
+
+        // else {
+        //     ctx.fillStyle = color;
+        //     ctx.fillRect(this.x, this.y, this.width, this.height);
+        // }
     }
     this.newPos = function () {
         this.x += this.speedX;
         this.y += this.speedY;
-    }
-    this.crashWith = function (otherobj) {
-        var myleft = this.x;
-        var myright = this.x + (this.width);
-        var mytop = this.y;
-        var mybottom = this.y + (this.height);
-        var otherleft = otherobj.x;
-        var otherright = otherobj.x + (otherobj.width);
-        var othertop = otherobj.y;
-        var otherbottom = otherobj.y + (otherobj.height);
-        var crash = true;
-        if ((mybottom < othertop) ||
-            (mytop > otherbottom) ||
-            (myright < otherleft) ||
-            (myleft > otherright)) {
-            crash = false;
+        if (this.type == "background") {
+            if (this.y == (this.height)) {
+                this.y = 0;
+            }
+
         }
-        return crash;
+        else {
+            this.hitBoundary()
+        }
+    }
+    // if space ship goes throw the boundary
+    this.hitBoundary = function () {
+        var boundarybottom = myGameArea.canvas.height - this.height - 50;
+        var boundarytop = 0 + this.height - 50;
+        var boundaryright = myGameArea.canvas.width;
+        var boundaryLeft = 0 - this.width
+        if (this.y > boundarybottom) {
+            this.y = boundarybottom;
+        }
+        if (this.y < boundarytop) {
+            this.y = boundarytop;
+        }
+        if (this.x < boundaryLeft) {
+            this.x = boundaryright
+        }
+        if (this.x > boundaryright) {
+            this.x = 0
+        }
     }
 }
+
 
 function moveup() {
     myGamePiece.speedY -= 15;
