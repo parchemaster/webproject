@@ -6,7 +6,7 @@ function startGame() {
     console.log(341 * (((myGameArea.canvas.width * 5) / 100) / 100))
     console.log(692 * (((myGameArea.canvas.width * 5) / 100) / 100))
 
-    myGamePiece = new component(100, 200, "https://www.nicepng.com/png/full/36-365566_jedistarfighter-detail-star-wars-jedi-starfighter-top-view.png", 100, 100, "image");
+    myGamePiece = new component(341, 692, "https://www.nicepng.com/png/full/36-365566_jedistarfighter-detail-star-wars-jedi-starfighter-top-view.png", 100, 100, "image");
 
     myBackground = new component(myGameArea.canvas.width, myGameArea.canvas.height, "https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80", 0, 0, "background");
     // myObstacle = new component(10, 200, "green", 300, 120);
