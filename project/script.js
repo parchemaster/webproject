@@ -8,9 +8,56 @@ var QuestKillMobs = 0;
 var pause_game = false;
 var myTotalScore;
 var myHpScore;
-function startGame() {
-    myGameArea.start();
+var angel
+// var sensor = new Gyroscope();
+// var magSensor = new Magnetometer({ frequency: 60 });
 
+function detectMob() {
+    const toMatch = [
+        /Android/i,
+        /webOS/i,
+        /iPhone/i,
+        /iPad/i,
+        /iPod/i,
+        /BlackBerry/i,
+        /Windows Phone/i
+    ];
+
+    return toMatch.some((toMatchItem) => {
+        return navigator.userAgent.match(toMatchItem);
+    });
+}
+
+
+function checkDevice() {
+    if (detectMob()) {
+        console.log("asd")
+        window.location.href = "mobile-game.html";
+    }
+    else {
+
+        startGame()
+    }
+}
+
+function startGyroscopeGame() {
+    let sensor = new Gyroscope();
+    sensor.start();
+
+    // sensor.onreading = () => {
+    //     document.getElementById("gyroscope-z").textContent = "Z: " + sensor.z
+    //     document.getElementById("gyroscope-x").textContent = "X: " + sensor.x
+    //     document.getElementById("gyroscope-y").textContent = "Y: " + sensor.y
+    // };
+
+    sensor.onerror = event => console.log(event.error.name, event.error.message);
+
+}
+
+function startGame() {
+    // sensor.start();
+    // magSensor.start();
+    myGameArea.start();
     myGamePiece = new ship("https://www.nicepng.com/png/full/36-365566_jedistarfighter-detail-star-wars-jedi-starfighter-top-view.png", "image");
     // myGameEnemy = new enemy(75, 75, "https://pngimg.com/uploads/starwars/starwars_PNG53.png", 100, 0, "image");
     myBackground = new background(innerWidth, innerHeight, "https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80", 0, 0, "background");
@@ -131,6 +178,18 @@ document.addEventListener('keydown', function (e) {
 
     }
 })
+
+let sensor = new Gyroscope();
+sensor.start();
+sensor.onreading = () => {
+    myGamePiece.x -= sensor.z * 80;
+};
+// myGamePiece.x -= angel
+sensor.onerror = errorHandler;
+function errorHandler(event) {
+    console.log(event.error.name, event.error.message);
+}
+
 function updateGameArea() {
     var x, y;
     var weapon_id = 0;
@@ -170,11 +229,22 @@ function updateGameArea() {
     if (myGameArea.keys && myGameArea.keys[87]) moveup();
     if (myGameArea.keys && myGameArea.keys[83]) movedown();
 
+    // TODO gyroscope movements
+    // sensor.onreading = () => {
+    // if (sensor.z > 0) {
+    //     moveleft()
+    // }
+    // else if (sensor.z < 0) {
+    //     moveright()
+    // }
+    // };
+
     if (myGameArea.keys && myGameArea.keys[32]) {
         blaster = new blast("https://www.pngarts.com/files/11/Green-Laser-PNG-Image.png", "image", myGamePiece.x, myGamePiece.y - 10);
         myGamePiece.newPos();
         playerBlaster.push(blaster);
     }
+
 
     /*if (myGameArea.keys && myGameArea.keys[27]) {
         pause();
