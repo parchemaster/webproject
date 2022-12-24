@@ -11,7 +11,6 @@ var myHpScore;
 function startGame() {
     myGameArea.start();
 
-
     myGamePiece = new ship("https://www.nicepng.com/png/full/36-365566_jedistarfighter-detail-star-wars-jedi-starfighter-top-view.png", "image");
     // myGameEnemy = new enemy(75, 75, "https://pngimg.com/uploads/starwars/starwars_PNG53.png", 100, 0, "image");
     myBackground = new background(innerWidth, innerHeight, "https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471&q=80", 0, 0, "background");
@@ -492,11 +491,14 @@ function pause() {
 function checkUser() {
     user = window.localStorage.getItem('user');
     if (user) {
-        location.replace("menu.html")
+        // location.replace("menu.html")
+        window.location.href = "menu.html";
+
     }
-    // else {
-    //     window.location.href = "index.html";
-    // }
+    else {
+        // location.replace("nickname.html")
+        window.location.href = "nickname.html";
+    }
 }
 
 function submiteForm() {
