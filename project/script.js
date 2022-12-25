@@ -90,6 +90,7 @@ var myGameArea = {
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.frameNo = 0;
         this.interval = setInterval(updateGameArea, 20);
+        this.canvas.style.cursor = "none";
         window.addEventListener('keydown', function (e) {
             myGameArea.keys = (myGameArea.keys || []);
             myGameArea.keys[e.keyCode] = true;
@@ -100,6 +101,19 @@ var myGameArea = {
         window.addEventListener('space', function (e) {
             myGameArea.keys = (myGameArea.keys || []);
         })
+        window.addEventListener('click', function (e) {
+            // myGameArea.keys = (myGameArea.keys || []);
+            blaster = new blast("https://www.pngarts.com/files/11/Green-Laser-PNG-Image.png", "image", myGamePiece.x, myGamePiece.y - 10);
+            myGamePiece.newPos();
+            playerBlaster.push(blaster);
+        })
+        //drag 
+        if (detectMob) {
+            window.addEventListener('touchmove', function (e) {
+                myGameArea.x = e.touches[0].screenX;
+                myGameArea.y = e.touches[0].screenY;
+            })
+        }
     },
     clear: function () {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -182,7 +196,8 @@ document.addEventListener('keydown', function (e) {
 let sensor = new Gyroscope();
 sensor.start();
 sensor.onreading = () => {
-    myGamePiece.x -= sensor.z * 80;
+    myGamePiece.x += sensor.y * 80;
+    myGamePiece.y += sensor.x * 30;
 };
 // myGamePiece.x -= angel
 sensor.onerror = errorHandler;
@@ -229,15 +244,20 @@ function updateGameArea() {
     if (myGameArea.keys && myGameArea.keys[87]) moveup();
     if (myGameArea.keys && myGameArea.keys[83]) movedown();
 
-    // TODO gyroscope movements
-    // sensor.onreading = () => {
-    // if (sensor.z > 0) {
-    //     moveleft()
+    //drag 
+    if (myGameArea.x && myGameArea.y) {
+        myGamePiece.x = myGameArea.x;
+        myGamePiece.y = myGameArea.y;
+    }
+
+    //mouse click
+    // if (myGameArea.keys) {
+    //     // myGamePiece.x = myGameArea.x;
+    //     // myGamePiece.y = myGameArea.y;
+    //     blaster = new blast("https://www.pngarts.com/files/11/Green-Laser-PNG-Image.png", "image", myGamePiece.x, myGamePiece.y - 10);
+    //     myGamePiece.newPos();
+    //     playerBlaster.push(blaster);
     // }
-    // else if (sensor.z < 0) {
-    //     moveright()
-    // }
-    // };
 
     if (myGameArea.keys && myGameArea.keys[32]) {
         blaster = new blast("https://www.pngarts.com/files/11/Green-Laser-PNG-Image.png", "image", myGamePiece.x, myGamePiece.y - 10);
