@@ -9,6 +9,7 @@ var pause_game = false;
 var myTotalScore;
 var myHpScore;
 var angel
+var isGyroscopeGame = false
 // var sensor = new Gyroscope();
 // var magSensor = new Magnetometer({ frequency: 60 });
 
@@ -31,7 +32,6 @@ function detectMob() {
 
 function checkDevice() {
     if (detectMob()) {
-        console.log("asd")
         window.location.href = "mobile-game.html";
     }
     else {
@@ -42,6 +42,7 @@ function checkDevice() {
 
 function startGyroscopeGame() {
     let sensor = new Gyroscope();
+    isGyroscopeGame = true;
     sensor.start();
 
     // sensor.onreading = () => {
@@ -108,7 +109,7 @@ var myGameArea = {
             playerBlaster.push(blaster);
         })
         //drag 
-        if (detectMob) {
+        if (detectMob && !isGyroscopeGame) {
             window.addEventListener('touchmove', function (e) {
                 myGameArea.x = e.touches[0].screenX;
                 myGameArea.y = e.touches[0].screenY;
