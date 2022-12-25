@@ -9,7 +9,7 @@ var pause_game = false;
 var myTotalScore;
 var myHpScore;
 var angel
-var isGyroscopeGame = false
+var isGyroscopeGame
 // var sensor = new Gyroscope();
 // var magSensor = new Magnetometer({ frequency: 60 });
 
@@ -35,27 +35,33 @@ function checkDevice() {
         window.location.href = "mobile-game.html";
     }
     else {
-
         startGame()
     }
 }
 
 function startGyroscopeGame() {
-    let sensor = new Gyroscope();
     isGyroscopeGame = true;
-    sensor.start();
-
-    // sensor.onreading = () => {
-    //     document.getElementById("gyroscope-z").textContent = "Z: " + sensor.z
-    //     document.getElementById("gyroscope-x").textContent = "X: " + sensor.x
-    //     document.getElementById("gyroscope-y").textContent = "Y: " + sensor.y
-    // };
-
-    sensor.onerror = event => console.log(event.error.name, event.error.message);
-
+    if (isGyroscopeGame) {
+        let sensor = new Gyroscope();
+        sensor.start();
+        sensor.onreading = () => {
+            myGamePiece.x += sensor.y * 80;
+            myGamePiece.y += sensor.x * 30;
+        };
+        // myGamePiece.x -= angel
+        sensor.onerror = errorHandler;
+        function errorHandler(event) {
+            console.log(event.error.name, event.error.message);
+        }
+    }
+    startGame()
 }
 
 function startGame() {
+    console.log(isGyroscopeGame)
+    if (isGyroscopeGame == undefined) {
+        isGyroscopeGame = false
+    }
     // sensor.start();
     // magSensor.start();
     myGameArea.start();
@@ -103,12 +109,11 @@ var myGameArea = {
             myGameArea.keys = (myGameArea.keys || []);
         })
         window.addEventListener('click', function (e) {
-            // myGameArea.keys = (myGameArea.keys || []);
             blaster = new blast("https://www.pngarts.com/files/11/Green-Laser-PNG-Image.png", "image", myGamePiece.x, myGamePiece.y - 10);
             myGamePiece.newPos();
             playerBlaster.push(blaster);
         })
-        //drag 
+        //drag
         if (detectMob && !isGyroscopeGame) {
             window.addEventListener('touchmove', function (e) {
                 myGameArea.x = e.touches[0].screenX;
@@ -193,18 +198,6 @@ document.addEventListener('keydown', function (e) {
 
     }
 })
-
-let sensor = new Gyroscope();
-sensor.start();
-sensor.onreading = () => {
-    myGamePiece.x += sensor.y * 80;
-    myGamePiece.y += sensor.x * 30;
-};
-// myGamePiece.x -= angel
-sensor.onerror = errorHandler;
-function errorHandler(event) {
-    console.log(event.error.name, event.error.message);
-}
 
 function updateGameArea() {
     var x, y;
